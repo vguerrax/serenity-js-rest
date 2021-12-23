@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "serenity-bdd update",
-    "t": "failsafe test:clean test:run test:report",
-    "test": "cucumber-js",
+    "test": "failsafe test:clean test:run test:report",
     "test:clean": "rimraf target/site/serenity",
     "test:run": "cucumber-js",
     "test:report": "serenity-bdd run"
