@@ -9,6 +9,7 @@ const pooolConfig = {
   user: process.env.username,
   password: process.env.password,
   database: process.env.database,
+  multipleStatements: true,
 };
 
 export default createPool(pooolConfig);

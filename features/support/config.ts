@@ -17,7 +17,7 @@ class Actors implements Cast {
     return actor.whoCan(
       CallAnApi.at(Config.baseUrl),
       TakeNotes.usingAnEmptyNotepad(),
-      new QueryMariaDb(pool),
+      QueryMariaDb.using(pool),
     );
   }
 }

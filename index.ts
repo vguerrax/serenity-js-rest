@@ -1,4 +1,6 @@
-import pool from './features/support/database/database';
+import Usuario from './features/support/models/request/UsuarioRequest';
 
-pool.query('SELECT * FROM usuarios')
-  .then((res) => { console.log(res); });
+const usuario = Usuario.createPayload();
+
+console.log(usuario.withName('Test').withEmail('teste@email').withPassword('123456').withPerfilId(1)
+  .toJson());

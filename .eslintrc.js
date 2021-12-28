@@ -18,6 +18,7 @@ module.exports = {
     'import/no-unresolved': 0,
     'no-useless-constructor': 0,
     'class-methods-use-this': 0,
+    'func-names': 0,
     'import/extensions': ['error', { ts: 'never' }],
   },
 };

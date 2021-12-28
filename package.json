@@ -6,8 +6,14 @@
   "scripts": {
     "postinstall": "serenity-bdd update",
     "test": "failsafe test:clean test:run test:report",
+    "test:automated": "failsafe test:clean test:runAutomated test:report",
+    "test:smoke": "failsafe test:clean test:runSmoke test:report",
+    "test:dev": "failsafe test:clean test:runDev test:report",
     "test:clean": "rimraf target/site/serenity",
     "test:run": "cucumber-js",
+    "test:runDev": "cucumber-js --tags '@test'",
+    "test:runAutomated": "cucumber-js --tags '@automated'",
+    "test:runSmoke": "cucumber-js --tags '@smoke'",
     "test:report": "serenity-bdd run"
   },
   "author": "Victor Guerra",

@@ -1,39 +1,45 @@
-import {
-  Ability, Discardable, Initialisable, Question, UsesAbilities,
-} from '@serenity-js/core';
+import { Ability, Question, UsesAbilities } from '@serenity-js/core';
 import { Pool } from 'mariadb';
 
-class QueryMariaDb implements Initialisable, Discardable, Ability {
+class QueryMariaDb implements Ability {
   static as(actor: UsesAbilities): QueryMariaDb {
     return actor.abilityTo(QueryMariaDb);
   }
 
-  initialise(): void | Promise<void> {
-    return Promise.resolve();
-  }
-
-  isInitialised(): boolean {
-    return this.pool.activeConnections() > 0;
-  }
-
-  discard(): void | Promise<void> {
-    this.pool.end();
+  static using(pool: Pool) {
+    return new QueryMariaDb(pool);
   }
 
   // eslint-disable-next-line no-empty-function, no-unused-vars
   constructor(private pool: Pool) {}
 
+  async end() {
+    await this.pool.end();
+  }
+
   query(query: string) {
     return this.pool.query(query);
   }
 
-  async selectAndInsertIfNotExists(selectQuery: string, insertQuery: string) {
-    const result = await this.query(selectQuery);
-    if (result.length <= 0) {
-      this.query(insertQuery);
+  async script(script: string) {
+    const queryObject = {
+      multipleStatements: true,
+      sql: script,
+    };
+    await this.pool.query(queryObject);
+  }
+
+  async countTableAndInsertIfNotExists(table: string, insertQuery: string) {
+    const result = await this.query(`SELECT COUNT(*) as count FROM ${table}`);
+    if (result[0].count <= 0) {
+      await this.query(insertQuery);
     }
   }
 }
+
+export const TheResultOfQuery = (query: string) => Question.about('the last query', (actor) => QueryMariaDb.as(actor)
+  .query(query)
+  .then((result) => result));
 
 export const NumberOfUsersInDatabse = () => Question.about('number of users in the database', (actor) => QueryMariaDb.as(actor)
   .query('SELECT COUNT(*) as count FROM usuarios')

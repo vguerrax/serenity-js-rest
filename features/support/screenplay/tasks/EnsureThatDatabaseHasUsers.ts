@@ -1,23 +1,22 @@
-// import { Ensure, startsWith } from '@serenity-js/assertions';
 import { Ensure, isGreaterThan } from '@serenity-js/assertions';
-import { Interaction, Task } from '@serenity-js/core';
+import { Interaction, TakeNote, Task } from '@serenity-js/core';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import bcryptjs from 'bcryptjs';
-import moment from 'moment';
 
-import Config from '../../../../test_config';
-import QueryMariaDb, { NumberOfUsersInDatabse } from '../abilities/QueryMariaDb';
+import QueryMariaDb, { NumberOfUsersInDatabse, TheResultOfQuery } from '../abilities/QueryMariaDb';
 
-// import * as noteKeys from '../../enums/key_notes';
-// import TheAuthenticationTokenValue from '../questions/TheAuthenticationTokenValue';
+import notesKeys from '../../enums/notes_keys';
 
-const selectQuery = 'SELECT * FROM usuarios';
-const insertQuery = `INSERT INTO usuarios (nome, email, password, perfil_id, created_at, updated_at)
-VALUES ('Automated', 'automated@email.com', '${bcryptjs.hashSync('automated', 8)}', 1, '${moment().format(Config.databaseDatetimeFormat)}', '${moment().format(Config.databaseDatetimeFormat)}')`;
+const selectQuery = 'SELECT * FROM usuarios ORDER BY id DESC';
 
+const script = readFileSync(resolve(__dirname, '..', '..', 'resources', 'scripts', 'usuarios.sql'), 'utf8')
+  .replaceAll('#password', bcryptjs.hashSync('123456', 8));
 const EnsureThatDatabaseHasUsers = () => Task.where(
   '#actor ensure that database has users',
-  Interaction.where('#actor verify if database has users', (actor) => QueryMariaDb.as(actor).selectAndInsertIfNotExists(selectQuery, insertQuery)),
+  Interaction.where('#actor executes database script to add users', (actor) => QueryMariaDb.as(actor).script(script)),
   Ensure.that(NumberOfUsersInDatabse(), isGreaterThan(0)),
+  TakeNote.of(TheResultOfQuery(selectQuery)).as(notesKeys.QueryResult),
 );
 
 export default EnsureThatDatabaseHasUsers;
