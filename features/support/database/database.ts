@@ -12,4 +12,4 @@ const pooolConfig = {
   multipleStatements: true,
 };
 
-export default createPool(pooolConfig);
+export const pool = createPool(pooolConfig);

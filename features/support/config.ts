@@ -7,8 +7,8 @@ import { CallAnApi } from '@serenity-js/rest';
 import dotenv from 'dotenv';
 
 import Config from '../../test_config';
-import pool from './database/database';
-import QueryMariaDb from './screenplay/abilities/QueryMariaDb';
+import { pool } from './database';
+import { QueryMariaDb } from './screenplay';
 
 dotenv.config();
 

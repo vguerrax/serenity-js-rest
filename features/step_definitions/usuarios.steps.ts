@@ -9,17 +9,15 @@ import {
   Send, GetRequest, LastResponse, PostRequest, PutRequest, DeleteRequest,
 } from '@serenity-js/rest';
 
-import EnsureThatDatabaseHasUsers from '../support/screenplay/tasks/EnsureThatDatabaseHasUsers';
-import notesKeys from '../support/enums/notes_keys';
-import UsuarioRequest from '../support/models/request/UsuarioRequest';
-import Request from '../support/models/request/Request';
 import {
+  EnsureThatDatabaseHasUsers,
   ExpectedPropertyValue,
   listOfObjectsHasProperties,
   objectHasTheProperties,
   objectHasThePropertiesWithTheValues,
-} from '../support/screenplay/expectations/Response';
-import { Payload } from '../support/models/types/payload';
+} from '../support/screenplay';
+import { NoteKeys } from '../support/enums';
+import { Payload, Request, UsuarioRequest } from '../support/models';
 
 Given('que existam usuários cadastrados', async () => {
   await actorInTheSpotlight().attemptsTo(
@@ -34,7 +32,7 @@ When('ele realiza uma requesição GET para o endpoint {string}', async (endpoin
     let queryResult: any;
     switch (pathParam[0]) {
       case '{usuarioId}':
-        queryResult = await Note.of(notesKeys.QueryResult)
+        queryResult = await Note.of(NoteKeys.QueryResult)
           .answeredBy(actorInTheSpotlight());
         await actorInTheSpotlight().attemptsTo(
           Send.a(
@@ -56,7 +54,7 @@ When('ele realiza uma requesição GET para o endpoint {string}', async (endpoin
 });
 
 When('ele realiza uma requesição POST para o endpoint {string}', async (endpoint: string) => {
-  const payload: Request = await actorInTheSpotlight().answer(Note.of(notesKeys.Payload));
+  const payload: Request = await actorInTheSpotlight().answer(Note.of(NoteKeys.Payload));
   await actorInTheSpotlight().attemptsTo(
     Send.a(
       PostRequest.to(endpoint).with(payload).using({ headers: { 'Content-Type': 'application/json' } }),
@@ -65,14 +63,14 @@ When('ele realiza uma requesição POST para o endpoint {string}', async (endpoi
 });
 
 When('ele realiza uma requesição PUT para o endpoint {string}', async (endpoint: string) => {
-  const payload = await actorInTheSpotlight().answer(Note.of(notesKeys.Payload));
+  const payload = await actorInTheSpotlight().answer(Note.of(NoteKeys.Payload));
   const pathParamRegExp = /\{\w+\}/;
   const pathParam = endpoint.match(pathParamRegExp);
   if (pathParam) {
     let queryResult: any;
     switch (pathParam[0]) {
       case '{usuarioId}':
-        queryResult = await Note.of(notesKeys.QueryResult)
+        queryResult = await Note.of(NoteKeys.QueryResult)
           .answeredBy(actorInTheSpotlight());
         await actorInTheSpotlight().attemptsTo(
           Send.a(
@@ -102,7 +100,7 @@ When('ele realiza uma requisição DELETE para o endpoint {string}', async (endp
     let queryResult: any;
     switch (pathParam[0]) {
       case '{usuarioId}':
-        queryResult = await Note.of(notesKeys.QueryResult)
+        queryResult = await Note.of(NoteKeys.QueryResult)
           .answeredBy(actorInTheSpotlight());
         await actorInTheSpotlight().attemptsTo(
           Send.a(
@@ -131,12 +129,12 @@ When('ele informa o payload para cadastrar/editar um usuário', async () => {
       .withPassword('123456')
       .withPerfilId(1)
       .build()))
-      .as(notesKeys.Payload),
+      .as(NoteKeys.Payload),
   );
 });
 
 When('ele não informa a chave {string}', async (property: string) => {
-  const payload = await actorInTheSpotlight().answer(Note.of(notesKeys.Payload));
+  const payload = await actorInTheSpotlight().answer(Note.of(NoteKeys.Payload));
   await actorInTheSpotlight().attemptsTo(
     TakeNote.of(Question.about('the payload', () => {
       delete payload[property];
@@ -146,7 +144,7 @@ When('ele não informa a chave {string}', async (property: string) => {
 });
 
 When('ele informa o valor {string} na chave {string}', async (value: string, property: string) => {
-  const payload:Payload = await actorInTheSpotlight().answer(Note.of(notesKeys.Payload));
+  const payload:Payload = await actorInTheSpotlight().answer(Note.of(NoteKeys.Payload));
   await actorInTheSpotlight().attemptsTo(
     TakeNote.of(Question.about('the payload', () => {
       payload[property] = value;
@@ -157,7 +155,7 @@ When('ele informa o valor {string} na chave {string}', async (value: string, pro
 
 When('ele informa um usuário inexistente', async () => {
   await actorInTheSpotlight().attemptsTo(
-    TakeNote.of(Question.about('the query result', () => [{ id: 0 }])).as(notesKeys.QueryResult),
+    TakeNote.of(Question.about('the query result', () => [{ id: 0 }])).as(NoteKeys.QueryResult),
   );
 });
 
@@ -190,7 +188,7 @@ Then('ele deve ver um JSON com o usuário cadastrado/alterado com as seguintes c
     Ensure.that(response, objectHasTheProperties(keys)),
   );
 
-  const payload: Payload = await actorInTheSpotlight().answer(Note.of(notesKeys.Payload));
+  const payload: Payload = await actorInTheSpotlight().answer(Note.of(NoteKeys.Payload));
   const expectedPropertiesValues: ExpectedPropertyValue[] = [
     {
       property: 'nome',

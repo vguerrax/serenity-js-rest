@@ -1,4 +1,2 @@
-interface Request {
+export interface Request {
 }
-
-export default Request;

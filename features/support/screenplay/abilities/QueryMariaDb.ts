@@ -1,7 +1,7 @@
-import { Ability, Question, UsesAbilities } from '@serenity-js/core';
+import { Ability, UsesAbilities } from '@serenity-js/core';
 import { Pool } from 'mariadb';
 
-class QueryMariaDb implements Ability {
+export class QueryMariaDb implements Ability {
   static as(actor: UsesAbilities): QueryMariaDb {
     return actor.abilityTo(QueryMariaDb);
   }
@@ -36,17 +36,3 @@ class QueryMariaDb implements Ability {
     }
   }
 }
-
-export const TheResultOfQuery = (query: string) => Question.about('the last query', (actor) => QueryMariaDb.as(actor)
-  .query(query)
-  .then((result) => result));
-
-export const NumberOfUsersInDatabse = () => Question.about('number of users in the database', (actor) => QueryMariaDb.as(actor)
-  .query('SELECT COUNT(*) as count FROM usuarios')
-  .then((result) => result[0].count));
-
-export const NumberOfStudentsInDatabse = () => Question.about('number of students in the database', (actor) => QueryMariaDb.as(actor)
-  .query('SELECT COUNT(*) as count FROM alunos')
-  .then((result) => result[0].count));
-
-export default QueryMariaDb;

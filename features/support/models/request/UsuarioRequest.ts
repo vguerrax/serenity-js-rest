@@ -1,5 +1,5 @@
-import { Payload } from '../types/payload';
-import Request from './Request';
+import { Payload } from '../types/Paylaoad';
+import { Request } from './Request';
 
 export type UsuarioPayload = Payload & {
   nome: string | null,
@@ -8,7 +8,7 @@ export type UsuarioPayload = Payload & {
   perfil_id: number | null,
 }
 
-class UsuarioRequest implements Request {
+export class UsuarioRequest implements Request {
   private payload: UsuarioPayload;
 
   private constructor() {
@@ -48,5 +48,3 @@ class UsuarioRequest implements Request {
     return this.payload;
   }
 }
-
-export default UsuarioRequest;

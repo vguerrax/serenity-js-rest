@@ -1,5 +1,5 @@
 export default {
-  baseUrl: 'http://localhost:3001/api-rest',
+  baseUrl: 'http://167.172.142.10/api-rest',
   users: {
     admin: {
       name: 'Victor',
